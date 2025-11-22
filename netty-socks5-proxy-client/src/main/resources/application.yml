@@ -1,0 +1,41 @@
+bindAddress: 0.0.0.0
+port: 1080
+maxConcurrentConnections: 1024
+
+timeouts:
+  handshakeSeconds: 15
+  idleSeconds: 300
+  connectTimeoutMillis: 10000
+
+authentication:
+  type: NONE
+#  users:
+#    - username: alice
+#      passwordHash: "$2b$10$eVn9s0d0b6DVwG4O51vs3uV/2fJz9zKm7DBrR2Kz2euxI6k90lXbK"
+
+accessControl:
+  allow:
+    - "*"
+  deny:
+    - "internal.corp"
+  defaultAllow: false
+
+security:
+  blockPrivateNetworks: true
+  allowLoopback: false
+  blockedSubnets:
+    - "10.0.0.0/8"
+    - "172.16.0.0/12"
+    - "192.168.0.0/16"
+    - "127.0.0.0/8"
+    - "::1/128"
+  blockedPorts:
+    - 22
+    - 3389
+    - 6379
+
+forwarding:
+  enabled: true
+  remoteHost: "127.0.0.1"   # ← 这里改成远端 Netty 的 IP / 域名
+  remotePort: 1090              # ← 远端服务监听端口
+  connectTimeoutMillis: 10000

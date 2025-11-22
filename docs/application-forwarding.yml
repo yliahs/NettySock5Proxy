@@ -1,0 +1,25 @@
+bindAddress: "0.0.0.0"
+port: 1080
+
+authentication:
+  type: USERNAME_PASSWORD
+  users:
+    - username: demo
+      passwordHash: "$2a$10$abcdefghijklmnopqrstuv"
+
+forwarding:
+  enabled: true
+  remoteHost: "127.0.0.1"
+  remotePort: 1090
+  connectTimeoutMillis: 10000
+  tls:
+    enabled: false
+    trustCertCollectionPath: "certs/ca/ca-cert.pem"
+    insecureTrustManager: false
+    keyCertChainPath: "certs/local/client-cert.pem"
+    keyFilePath: "certs/local/client-key.pem"
+    keyPassword:
+
+security:
+  blockPrivateNetworks: false
+

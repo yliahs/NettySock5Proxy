@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="60 seconds">
+    <property name="LOG_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 默认 INFO 级别，避免 DEBUG 噪音；需要详细日志时可通过 -Dlogging.level.root=DEBUG 覆盖 -->
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+    <!-- 根据需要单独调高 Netty 或业务包的日志级别 -->
+    <logger name="io.netty" level="INFO"/>
+    <logger name="com.yliahs.client" level="${SOCKS5_LOG_LEVEL:-INFO}"/>
+</configuration>
+
