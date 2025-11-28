@@ -1,6 +1,7 @@
 package com.yliahs.server;
 
-import com.yliahs.server.config.ConfigLoader;
+
+import com.yliahs.common.config.ConfigLoader;
 import com.yliahs.server.config.ServerConfig;
 
 public class ServerApplication {

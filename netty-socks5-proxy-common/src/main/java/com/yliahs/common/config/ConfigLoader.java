@@ -1,6 +1,6 @@
-package com.yliahs.server.config;
+package com.yliahs.common.config;
 
-import com.yliahs.server.utils.YamlUtils;
+import com.yliahs.common.utils.YamlUtils;
 
 import java.io.IOException;
 import java.io.InputStream;

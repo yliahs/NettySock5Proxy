@@ -1,4 +1,4 @@
-package com.yliahs.server.utils;
+package com.yliahs.common.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
