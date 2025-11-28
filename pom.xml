@@ -14,6 +14,7 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>netty-socks5-proxy-common</module>
         <module>netty-socks5-proxy-server</module>
         <module>netty-socks5-proxy-client</module>
         <module>netty-socks5-proxy-tools</module>
