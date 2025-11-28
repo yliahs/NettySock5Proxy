@@ -1,5 +1,6 @@
 package com.yliahs.server.codec;
 
+import com.yliahs.server.temp2.codec.ForwardConnectRequest;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
