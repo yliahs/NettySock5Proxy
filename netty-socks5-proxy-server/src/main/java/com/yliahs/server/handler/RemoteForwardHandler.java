@@ -45,22 +45,49 @@ public class RemoteForwardHandler extends SimpleChannelInboundHandler<ForwardCon
 
         ChannelFuture connectFuture = bootstrap.connect(msg.host(), msg.port());
         connectFuture.addListener((ChannelFutureListener) future -> {
-            if (!future.isSuccess()) {
-                byte status = mapErrorToStatusByte(future.cause());
-                log.warn("Remote connect failed: {}:{} status={} error={}",
-                        msg.host(), msg.port(), status, future.cause().toString());
-                sendResponse(ctx, status);
-                ctx.close();
-                return;
+            // 确保在正确的事件循环线程中执行
+            if (ctx.executor().inEventLoop()) {
+                handleConnectResult(ctx, msg, future);
+            } else {
+                ctx.executor().execute(() -> handleConnectResult(ctx, msg, future));
             }
-            Channel targetChannel = future.channel();
-            if (ctx.pipeline().get(ForwardConnectRequestDecoder.class) != null) {
-                ctx.pipeline().remove(ForwardConnectRequestDecoder.class);
-            }
-            ctx.pipeline().replace(this, "relay", new RelayHandler(targetChannel));
-            sendResponse(ctx, (byte) 0);
-            targetChannel.read();
         });
+    }
+
+    private void handleConnectResult(ChannelHandlerContext ctx, ForwardConnectRequest msg, ChannelFuture future) {
+        // 再次检查context是否仍然有效
+        if (!ctx.channel().isActive()) {
+            return;
+        }
+
+        if (!future.isSuccess()) {
+            byte status = mapErrorToStatusByte(future.cause());
+            log.warn("Remote connect failed: {}:{} status={} error={}",
+                    msg.host(), msg.port(), status, future.cause().toString());
+            sendResponse(ctx, status);
+            ctx.close();
+            return;
+        }
+        
+        Channel targetChannel = future.channel();
+        
+        // 更安全的方式移除handler和添加新handler
+        try {
+            ChannelPipeline pipeline = ctx.pipeline();
+            if (pipeline.get(ForwardConnectRequestDecoder.class) != null) {
+                pipeline.remove(ForwardConnectRequestDecoder.class);
+            }
+            // 使用名称而不是类来替换handler，更加可靠
+            pipeline.replace("forwardHandler", "relay", new RelayHandler(targetChannel));
+        } catch (Exception e) {
+            log.warn("Failed to modify pipeline", e);
+            targetChannel.close();
+            ctx.close();
+            return;
+        }
+        
+        sendResponse(ctx, (byte) 0);
+        targetChannel.read();
     }
 
     private void sendResponse(ChannelHandlerContext ctx, byte status) {
@@ -96,4 +123,3 @@ public class RemoteForwardHandler extends SimpleChannelInboundHandler<ForwardCon
         ctx.close();
     }
 }
-

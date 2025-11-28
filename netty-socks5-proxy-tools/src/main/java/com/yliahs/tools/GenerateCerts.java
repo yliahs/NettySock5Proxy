@@ -25,6 +25,9 @@ import java.security.PrivateKey;
 import java.security.Security;
 import java.security.cert.X509Certificate;
 import java.util.Date;
+import java.security.PrivateKey;
+import org.bouncycastle.openssl.jcajce.JcaMiscPEMGenerator;
+import org.bouncycastle.util.io.pem.PemObject;
 
 public class GenerateCerts {
 
@@ -174,7 +177,12 @@ public class GenerateCerts {
 
     private static void writePem(Path path, Object obj) throws IOException {
         try (JcaPEMWriter writer = new JcaPEMWriter(new FileWriter(path.toFile()))) {
-            writer.writeObject(obj);
+            if (obj instanceof PrivateKey) {
+                // 明确使用PKCS#8格式写入私钥
+                writer.writeObject(new JcaMiscPEMGenerator(obj, null).generate());
+            } else {
+                writer.writeObject(obj);
+            }
         }
     }
 }
