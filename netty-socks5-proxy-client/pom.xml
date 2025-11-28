@@ -18,6 +18,10 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.yliahs</groupId>
+            <artifactId>netty-socks5-proxy-common</artifactId>
+        </dependency>
+        <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
         </dependency>
