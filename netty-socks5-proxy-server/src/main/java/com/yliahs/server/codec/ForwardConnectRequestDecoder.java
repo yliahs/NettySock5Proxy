@@ -1,6 +1,5 @@
 package com.yliahs.server.codec;
 
-import com.yliahs.server.temp2.codec.ForwardConnectRequest;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
@@ -65,6 +64,6 @@ public class ForwardConnectRequestDecoder extends ByteToMessageDecoder {
         }
 
         int port = in.readUnsignedShort();
-        out.add(new ForwardConnectRequest(addressType, host, port));
+//        out.add(new ForwardConnectRequest(addressType, host, port));
     }
 }

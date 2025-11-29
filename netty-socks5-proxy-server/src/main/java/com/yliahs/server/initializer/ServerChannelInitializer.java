@@ -17,7 +17,7 @@ public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> 
     @Override
     protected void initChannel(SocketChannel ch) throws Exception {
         ChannelPipeline channelPipeline = ch.pipeline();
-        channelPipeline.addLast(new ForwardConnectRequestDecoder());
+//        channelPipeline.addLast(new ForwardConnectRequestDecoder());
         channelPipeline.addLast(new ForwardHandler());
     }
 }

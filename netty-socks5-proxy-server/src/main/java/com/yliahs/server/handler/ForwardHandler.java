@@ -26,6 +26,5 @@ public class ForwardHandler extends SimpleChannelInboundHandler {
             Socks5CommandResponse commandResponse = new DefaultSocks5CommandResponse(Socks5CommandStatus.SUCCESS, Socks5AddressType.IPv4);
             ctx.writeAndFlush(commandResponse);
         });
-
     }
 }

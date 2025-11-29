@@ -17,6 +17,5 @@ public class ForwardChannelInitializer extends ChannelInitializer<SocketChannel>
     protected void initChannel(SocketChannel ch) throws Exception {
         ChannelPipeline channelPipeline = ch.pipeline();
         channelPipeline.addLast(new Dest2ClientHandler(clientChannelContext));
-
     }
 }

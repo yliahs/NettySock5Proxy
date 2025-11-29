@@ -1,0 +1,3 @@
+bindAddress: 0.0.0.0
+port: 10900
+connectTimeoutMillis: 1024

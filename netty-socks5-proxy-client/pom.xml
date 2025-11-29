@@ -85,7 +85,7 @@
                             <transformers>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>com.yliahs.client.Socks5ProxyServer</mainClass>
+                                    <mainClass>com.yliahs.client.temp2.Socks5ProxyServer</mainClass>
                                 </transformer>
                             </transformers>
                         </configuration>

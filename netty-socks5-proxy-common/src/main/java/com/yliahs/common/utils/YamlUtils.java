@@ -35,6 +35,7 @@ public class YamlUtils {
             ObjectMapper mapper = getMapper();
             return mapper.readValue(in, clazz);
         } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
     }
