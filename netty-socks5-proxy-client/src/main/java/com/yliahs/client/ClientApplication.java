@@ -1,6 +1,6 @@
-package com.yliahs.client.temp;
+package com.yliahs.client;
 
-import com.yliahs.client.temp.config.ClientConfig;
+import com.yliahs.client.config.ClientConfig;
 import com.yliahs.common.config.ConfigLoader;
 
 public class ClientApplication {

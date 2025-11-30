@@ -1,4 +1,4 @@
-package com.yliahs.client.temp.config;
+package com.yliahs.client.config;
 
 public class ClientConfig {
     private int port = 10900;

@@ -1,7 +1,7 @@
-package com.yliahs.client.temp;
+package com.yliahs.client;
 
-import com.yliahs.client.temp.config.ClientConfig;
-import com.yliahs.client.temp.initializer.ClientChannelInitializer;
+import com.yliahs.client.config.ClientConfig;
+import com.yliahs.client.initializer.ClientChannelInitializer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
