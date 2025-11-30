@@ -28,7 +28,7 @@ public class ClientChannelInitializer extends ChannelInitializer<SocketChannel> 
     protected void initChannel(SocketChannel ch) throws Exception {
         ChannelPipeline channelPipeline = ch.pipeline();
         ch.pipeline().addLast(new LoggingHandler(LogLevel.DEBUG));
-        channelPipeline.addLast(new LogRecordHandler(100,100,100,100));
+//        channelPipeline.addLast(new LogRecordHandler(100,100,100,100));
         channelPipeline.addLast(
                 new IdleStateHandler(100, 0, 0, TimeUnit.SECONDS));
         channelPipeline.addLast( new IdleTimeoutHandler());

@@ -1,6 +1,6 @@
 package com.yliahs.server.initializer;
 
-import com.yliahs.server.handler.Dest2ClientHandler;
+import com.yliahs.common.handler.Dest2ClientHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;

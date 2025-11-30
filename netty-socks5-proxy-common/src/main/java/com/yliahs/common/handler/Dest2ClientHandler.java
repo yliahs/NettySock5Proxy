@@ -1,4 +1,4 @@
-package com.yliahs.server.handler;
+package com.yliahs.common.handler;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;

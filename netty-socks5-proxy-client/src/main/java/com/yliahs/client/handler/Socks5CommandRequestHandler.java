@@ -2,6 +2,8 @@ package com.yliahs.client.handler;
 
 import com.yliahs.client.config.ClientConfig;
 import com.yliahs.client.temp2.endpoint.Socks5UdpEndpoint;
+import com.yliahs.common.handler.Client2DestHandler;
+import com.yliahs.common.handler.Dest2ClientHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.socket.SocketChannel;
@@ -90,58 +92,4 @@ public class Socks5CommandRequestHandler extends SimpleChannelInboundHandler<Def
         });
     }
 
-
-    /**
-     * 将目标服务器信息转发给客户端
-     *
-     * @author huchengyi
-     *
-     */
-    private static class Dest2ClientHandler extends ChannelInboundHandlerAdapter {
-
-        private ChannelHandlerContext clientChannelContext;
-
-        public Dest2ClientHandler(ChannelHandlerContext clientChannelContext) {
-            this.clientChannelContext = clientChannelContext;
-        }
-
-        @Override
-        public void channelRead(ChannelHandlerContext ctx2, Object destMsg) throws Exception {
-            logger.trace("将目标服务器信息转发给客户端");
-            clientChannelContext.writeAndFlush(destMsg);
-        }
-
-        @Override
-        public void channelInactive(ChannelHandlerContext ctx2) throws Exception {
-            logger.trace("目标服务器断开连接");
-            clientChannelContext.channel().close();
-        }
-    }
-
-    /**
-     * 将客户端的消息转发给目标服务器端
-     *
-     * @author huchengyi
-     *
-     */
-    private static class Client2DestHandler extends ChannelInboundHandlerAdapter {
-
-        private ChannelFuture destChannelFuture;
-
-        public Client2DestHandler(ChannelFuture destChannelFuture) {
-            this.destChannelFuture = destChannelFuture;
-        }
-
-        @Override
-        public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-            logger.trace("将客户端的消息转发给目标服务器端");
-            destChannelFuture.channel().writeAndFlush(msg);
-        }
-
-        @Override
-        public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-            logger.trace("客户端断开连接");
-            destChannelFuture.channel().close();
-        }
-    }
 }
