@@ -1,7 +1,7 @@
 package com.yliahs.client.handler;
 
 import com.yliahs.client.config.ClientConfig;
-import com.yliahs.client.temp2.endpoint.Socks5UdpEndpoint;
+import com.yliahs.client.initializer.ForwardChannelInitializer;
 import com.yliahs.common.handler.Client2DestHandler;
 import com.yliahs.common.handler.Dest2ClientHandler;
 import io.netty.bootstrap.Bootstrap;
@@ -12,7 +12,6 @@ import io.netty.handler.codec.socksx.v5.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.InetSocketAddress;
 import java.util.Objects;
 
 public class Socks5CommandRequestHandler extends SimpleChannelInboundHandler<DefaultSocks5CommandRequest> {
@@ -30,16 +29,19 @@ public class Socks5CommandRequestHandler extends SimpleChannelInboundHandler<Def
     protected void channelRead0(final ChannelHandlerContext ctx, DefaultSocks5CommandRequest msg) throws Exception {
         if (Objects.equals(msg.type(), Socks5CommandType.CONNECT)) {
             handleTcpConnect(ctx, msg);
-        } else if (Objects.equals(msg.type(), Socks5CommandType.UDP_ASSOCIATE)) {
-            handleUdpAssociate(ctx, msg);
         } else {
             ctx.writeAndFlush(new DefaultSocks5CommandResponse(Socks5CommandStatus.COMMAND_UNSUPPORTED, Socks5AddressType.IPv4))
                     .addListener(ChannelFutureListener.CLOSE);
+            ctx.close();
         }
     }
 
 
     private void handleTcpConnect(ChannelHandlerContext ctx, DefaultSocks5CommandRequest msg) {
+//        if (clientConfig.getForwardingConfig().isEnabled()) {
+//            handleTcpForward(ctx, msg);
+//        }
+
         Bootstrap bootstrap = new Bootstrap();
         bootstrap.group(ctx.channel().eventLoop())
                 .channel(NioSocketChannel.class)
@@ -64,32 +66,22 @@ public class Socks5CommandRequestHandler extends SimpleChannelInboundHandler<Def
                 } else {
                     Socks5CommandResponse commandResponse = new DefaultSocks5CommandResponse(Socks5CommandStatus.FAILURE, Socks5AddressType.IPv4);
                     ctx.writeAndFlush(commandResponse);
+                    ctx.close();
                 }
             }
         });
     }
 
-    private void handleUdpAssociate(ChannelHandlerContext ctx, DefaultSocks5CommandRequest msg) {
-        InetSocketAddress clientAddress = (InetSocketAddress) ctx.channel().remoteAddress();
-        Socks5UdpEndpoint udpEndpoint = new Socks5UdpEndpoint(ctx.channel().eventLoop(), clientAddress);
+    private void handleTcpForward(ChannelHandlerContext ctx, DefaultSocks5CommandRequest msg) {
+        ClientConfig.ForwardingConfig forwardingConfig = clientConfig.getForwardingConfig();
 
-        udpEndpoint.start(clientConfig.getBindAddress()).addListener(future -> {
-            if (future.isSuccess()) {
-                Channel udpChannel = ((ChannelFuture) future).channel();
-                InetSocketAddress boundAddress = (InetSocketAddress) udpChannel.localAddress();
+        Bootstrap bootstrap = new Bootstrap();
+        bootstrap.group(ctx.channel().eventLoop())
+                .channel(NioSocketChannel.class)
+                .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, forwardingConfig.getConnectTimeoutMillis())
+                .handler(new ForwardChannelInitializer(ctx));
 
-                ctx.channel().closeFuture().addListener(f -> {
-                    udpEndpoint.close();
-                });
-
-                ctx.writeAndFlush(new DefaultSocks5CommandResponse(
-                        Socks5CommandStatus.SUCCESS, Socks5AddressType.IPv4, boundAddress.getAddress().getHostAddress(), boundAddress.getPort()));
-
-            } else {
-                ctx.writeAndFlush(new DefaultSocks5CommandResponse(Socks5CommandStatus.FAILURE, Socks5AddressType.IPv4))
-                        .addListener(ChannelFutureListener.CLOSE);
-            }
-        });
+        ChannelFuture connectFuture = bootstrap.connect(forwardingConfig.getHost(), forwardingConfig.getPort());
     }
 
 }

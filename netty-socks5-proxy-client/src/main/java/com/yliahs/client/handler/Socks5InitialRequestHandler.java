@@ -1,6 +1,6 @@
 package com.yliahs.client.handler;
 
-import io.netty.channel.ChannelFutureListener;
+import com.yliahs.client.service.Sock5HandlerService;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.socksx.SocksVersion;
@@ -23,9 +23,11 @@ public class Socks5InitialRequestHandler extends SimpleChannelInboundHandler<Def
                 methods.contains(Socks5AuthMethod.NO_AUTH)) {
             initialResponse = new DefaultSocks5InitialResponse(Socks5AuthMethod.NO_AUTH);
             ctx.writeAndFlush(initialResponse);
+            Sock5HandlerService.connected(ctx);
         } else {
             initialResponse = new DefaultSocks5InitialResponse(Socks5AuthMethod.UNACCEPTED);
-            ctx.writeAndFlush(initialResponse).addListener(ChannelFutureListener.CLOSE);
+            ctx.writeAndFlush(initialResponse);
+            ctx.close();
         }
     }
 
